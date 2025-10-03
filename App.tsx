@@ -1,17 +1,18 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import AppNavigator from './navigation/AppNavigator';
+import AppNavigator from './navigation/AppNavigator'
+import { navigationRef } from './hooks/useNavigation'
 
 const App = () => {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <AppNavigator />
       </NavigationContainer>
     </SafeAreaProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

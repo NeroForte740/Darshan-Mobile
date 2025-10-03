@@ -1,30 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Alert, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useEffect } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { View, Text, ScrollView, Alert, StyleSheet } from 'react-native'
 
-import api from '../services/api';
-import CustomButton from '../components/CustomButton';
+import { getAllOrders } from '@services/ordersService'
+
+import CustomButton from '@components/CustomButton'
+
+import colors from '@styles/colors'
 
 export default function HomeScreen() {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([])
+  const [isLoading, setLoading] = useState(true)
+
+  const mockPosts = [
+    {
+      id: 1,
+      title: 'Primeiro Post',
+      body: 'Este é um post de exemplo para testar a listagem de posts no app.',
+      userId: 101,
+    },
+    {
+      id: 2,
+      title: 'Explorando o React Native',
+      body: 'React Native permite criar apps nativos usando JavaScript e React.',
+      userId: 102,
+    },
+    {
+      id: 3,
+      title: 'Axios na Prática',
+      body: 'O Axios é uma biblioteca muito útil para requisições HTTP.',
+      userId: 103,
+    },
+    {
+      id: 4,
+      title: 'CustomButton em Ação',
+      body: 'Este botão personalizado suporta estilos dinâmicos e estado de loading.',
+      userId: 104,
+    },
+    {
+      id: 5,
+      title: 'Darshan Mobile 🚀',
+      body: 'Projeto de exemplo com estrutura organizada e boas práticas.',
+      userId: 105,
+    },
+  ]
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPosts()
+  }, [])
 
   const fetchPosts = async () => {
     try {
-      setLoading(true);
-      const response = await api.get('/posts');
-      setPosts(response.data.slice(0, 10));
+      setLoading(true)
+      // const response = await getAllOrders()
+      setPosts(mockPosts)
     } catch (error) {
-      Alert.alert('Erro', 'Falha ao carregar posts');
-      console.error('Error fetching posts:', error);
+      Alert.alert('Erro', 'Falha ao carregar posts')
+      console.error('Error fetching posts:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,9 +75,13 @@ export default function HomeScreen() {
         </View>
 
         <CustomButton 
-          text='Recarregar Posts' 
           onPress={fetchPosts}
+          text='Recarregar Posts' 
+          backgroundColor={colors.PURPLE}
+          paddingVertical={8}
+          borderRadius={24}
           loading={isLoading}
+          marginBottom={10}
         />
 
         {isLoading ? (
@@ -69,7 +109,7 @@ export default function HomeScreen() {
         )}
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -105,6 +145,7 @@ const styles = StyleSheet.create({
   },
   postsContainer: {
     gap: 16,
+    paddingBottom: 20,
   },
   postCard: {
     backgroundColor: 'white',
@@ -141,4 +182,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#3b82f6',
   },
-});
+})
