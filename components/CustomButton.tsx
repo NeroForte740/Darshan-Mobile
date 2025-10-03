@@ -1,8 +1,8 @@
-import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import React from 'react'
+import { TouchableOpacity, Text, ActivityIndicator } from 'react-native'
 
-import { getCustomButtonStyles } from './styles';
-import colors from '../styles/colors';
+import { getCustomButtonStyles } from './styles'
+import colors from '@styles/colors'
 
 interface CustomButtonProps {
   onPress: () => void
@@ -10,7 +10,13 @@ interface CustomButtonProps {
   loading?: boolean
   loadingColor?: string
   backgroundColor?: string
+  paddingVertical: number
+  paddingHorizontal?: number
+  borderRadius: number
+  marginTop?: number
+  marginBottom?: number
   textColor?: string
+  textSize?: number
 }
 
 const CustomButton = (props: CustomButtonProps) => {
@@ -19,11 +25,17 @@ const CustomButton = (props: CustomButtonProps) => {
     text,
     loading,
     loadingColor = colors.WHITE,
-    backgroundColor = '#007AFF',
+    backgroundColor = colors.BLUE,
+    paddingVertical,
+    paddingHorizontal,
+    borderRadius,
+    marginTop,
+    marginBottom,
     textColor = colors.WHITE,
-  } = props;
+    textSize = 14,
+  } = props
 
-  const styles = getCustomButtonStyles(backgroundColor, textColor);
+  const styles = getCustomButtonStyles(backgroundColor, paddingVertical, paddingHorizontal, borderRadius, marginTop, marginBottom, textColor, textSize)
 
   return (
     <TouchableOpacity 
@@ -37,7 +49,7 @@ const CustomButton = (props: CustomButtonProps) => {
         <Text style={styles.buttonText}>{text}</Text>
       )}
     </TouchableOpacity>
-  );
-};
+  )
+}
 
-export default CustomButton;
+export default CustomButton

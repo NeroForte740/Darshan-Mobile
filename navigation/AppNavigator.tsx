@@ -1,9 +1,10 @@
-import React from 'react';
+import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '@screens/HomeScreen'
+import LoginScreen from '@screens/LoginScreen'
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator()
 
 export default function AppNavigator() {
   const RootNavigator = undefined
@@ -11,18 +12,23 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator
       id={RootNavigator}
-      initialRouteName="Home"
-      screenOptions={{
-      }}
+      initialRouteName='Login'
     >
       <Stack.Screen 
-        name="Home" 
+        name='Home' 
         component={HomeScreen} 
         options={{ 
           title: 'Darshan Mobile',
           headerShown: false
         }} 
       />
+      <Stack.Screen 
+        name='Login'
+        component={LoginScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
-  );
+  )
 }
