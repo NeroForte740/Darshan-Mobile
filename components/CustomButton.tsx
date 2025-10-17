@@ -1,7 +1,7 @@
 import React from 'react'
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native'
 
-import { getCustomButtonStyles } from './styles'
+import { getCustomButtonStyles } from '@styles/index'
 import colors from '@styles/colors'
 
 interface CustomButtonProps {
@@ -25,7 +25,7 @@ const CustomButton = (props: CustomButtonProps) => {
     text,
     loading,
     loadingColor = colors.WHITE,
-    backgroundColor = colors.BLUE,
+    backgroundColor = colors.BLUE_1,
     paddingVertical,
     paddingHorizontal,
     borderRadius,

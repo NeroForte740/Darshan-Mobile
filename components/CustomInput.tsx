@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, TextInput } from 'react-native'
 
-import { getCustomInputStyles } from './styles'
+import { getCustomInputStyles } from '@styles/index'
 
 interface CustomInputProps {
   label: string

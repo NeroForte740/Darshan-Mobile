@@ -3,6 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import HomeScreen from '@screens/HomeScreen'
 import LoginScreen from '@screens/LoginScreen'
+import NewOrderScreen from '@screens/NewOrderScreen'
+import EditOrderScreen from '@screens/EditOrderScreen'
 
 const Stack = createStackNavigator()
 
@@ -25,6 +27,20 @@ export default function AppNavigator() {
       <Stack.Screen 
         name='Login'
         component={LoginScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name='NewOrder'
+        component={NewOrderScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name='EditOrder'
+        component={EditOrderScreen}
         options={{
           headerShown: false,
         }}
