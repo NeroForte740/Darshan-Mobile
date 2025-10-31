@@ -10,13 +10,13 @@ interface CustomButtonProps {
   loading?: boolean
   loadingColor?: string
   backgroundColor?: string
-  paddingVertical: number
-  paddingHorizontal?: number
-  borderRadius: number
+  paddingVertical?: number
+  borderRadius?: number
   marginTop?: number
   marginBottom?: number
   textColor?: string
-  textSize?: number
+  fontSize?: number
+  maxWidth?: number
 }
 
 const CustomButton = (props: CustomButtonProps) => {
@@ -27,22 +27,27 @@ const CustomButton = (props: CustomButtonProps) => {
     loadingColor = colors.WHITE,
     backgroundColor = colors.BLUE_1,
     paddingVertical,
-    paddingHorizontal,
     borderRadius,
     marginTop,
     marginBottom,
     textColor = colors.WHITE,
-    textSize = 14,
+    fontSize = 16,
+    maxWidth,
   } = props
 
-  const styles = getCustomButtonStyles(backgroundColor, paddingVertical, paddingHorizontal, borderRadius, marginTop, marginBottom, textColor, textSize)
+  const styles = getCustomButtonStyles(
+    backgroundColor,
+    paddingVertical,
+    borderRadius,
+    marginTop,
+    marginBottom,
+    textColor,
+    fontSize,
+    maxWidth,
+  )
 
   return (
-    <TouchableOpacity 
-      style={styles.button}
-      onPress={onPress}
-      disabled={loading}
-    >
+    <TouchableOpacity style={styles.button} onPress={onPress} disabled={loading}>
       {loading ? (
         <ActivityIndicator color={loadingColor} />
       ) : (

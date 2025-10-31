@@ -1,50 +1,65 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Header from '@components/Header'
 import CustomButton from '@components/CustomButton'
 import CustomInput from '@components/CustomInput'
 
-import { createOrder } from '@services/ordersService'
+import { updateOrder } from '@services/ordersService'
 import { resetStack, showToast } from '@utils/functions'
 
 import colors from '@styles/colors'
+import CustomPicker from '@components/CustomPicker'
 
-export default function NewOrderScreen() {
+export default function UpdateOrderScreen({ route }) {
+  const { order } = route.params
+
   const [isLoading, setLoading] = useState(false)
-  const [orderClient, setOrderClient] = useState('')
-  const [orderDescription, setOrderDescription] = useState('')
+  const [paymentStatus, setPaymentStatus] = useState(order.ped_status_pag)
+  const [orderStatus, setOrderStatus] = useState(order.ped_status_preparo)
+  const [orderClient, setOrderClient] = useState(order.ped_client)
+  const [orderDescription, setOrderDescription] = useState(order.ped_description)
 
   const navigation = useNavigation()
-  const orderClientInputRef = useRef<TextInput>(null)
-  const orderDescriptionInputRef = useRef<TextInput>(null)
 
-  const handleCreateOrder = async () => {
-    if (!orderClient.length || !orderDescription.length) {
+  const paymentStatusOptions = [
+    { value: 'Pendente', label: 'Pendente' },
+    { value: 'Pago', label: 'Pago' },
+  ]
+
+  const orderStatusOptions = [
+    { value: 'Em preparo', label: 'Em preparo' },
+    { value: 'Em transporte', label: 'Em transporte' },
+    { value: 'Finalizado', label: 'Finalizado' },
+  ]
+
+  const handleUpdateOrder = async () => {
+    if (!paymentStatus.length || !orderStatus.length || !orderDescription.length) {
       showToast({
-        type: 'info',
+        type: '',
         title: 'Atenção',
-        message: 'Preencha os campos para criar pedido!',
+        message: 'Preencha a descrição do pedido',
       })
       return
     }
 
     try {
       setLoading(true)
-      await createOrder({
-        client: orderClient,
-        description: orderDescription,
+      await updateOrder(order.ped_id, {
+        ...order,
+        ped_status_preparo: orderStatus,
+        ped_status_pag: paymentStatus,
+        ped_client: orderClient,
+        ped_description: orderDescription,
       })
 
       showToast({
         type: 'success',
-        title: 'Sucesso',
-        message: 'Pedido criado com sucesso!',
+        title: 'Sucesso!',
+        message: `Pedido #${order.ped_id} editado com sucesso!`,
       })
-      setOrderClient('')
-      setOrderDescription('')
       resetStack(navigation, 'Home')
     } catch (error) {
       showToast({
@@ -64,7 +79,23 @@ export default function NewOrderScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.container}>
             <View style={styles.card}>
-              <Text style={styles.title}>Novo Pedido</Text>
+              <Text style={styles.title}>{`Pedido #${order.ped_id}`}</Text>
+              <CustomPicker
+                label="Status de Pagamento"
+                fontSize={16}
+                maxWidth={300}
+                selectedValue={paymentStatus}
+                onValueChange={e => setPaymentStatus(e)}
+                options={paymentStatusOptions}
+              />
+              <CustomPicker
+                label="Status do Pedido"
+                fontSize={16}
+                maxWidth={300}
+                selectedValue={orderStatus}
+                onValueChange={e => setOrderStatus(e)}
+                options={orderStatusOptions}
+              />
               <CustomInput
                 label="Cliente"
                 fontSize={16}
@@ -72,9 +103,6 @@ export default function NewOrderScreen() {
                 placeholder="Insira o nome do cliente"
                 value={orderClient}
                 onChangeText={e => setOrderClient(e)}
-                ref={orderClientInputRef}
-                returnKeyType="next"
-                onSubmitEditing={() => orderDescriptionInputRef.current?.focus()}
               />
               <CustomInput
                 label="Descrição do Pedido"
@@ -83,15 +111,14 @@ export default function NewOrderScreen() {
                 placeholder="Ex: 2 - Água, 1 - Coca cola..."
                 value={orderDescription}
                 onChangeText={e => setOrderDescription(e)}
-                ref={orderDescriptionInputRef}
                 multiline={true}
                 lines={2}
               />
               <View style={styles.buttonContainer}>
                 <CustomButton
-                  onPress={() => handleCreateOrder()}
-                  text="Concluir Pedido"
-                  backgroundColor={colors.BLUE_1}
+                  onPress={() => handleUpdateOrder()}
+                  text="Editar Pedido"
+                  backgroundColor={colors.GREEN_1}
                   paddingVertical={8}
                   borderRadius={24}
                   maxWidth={250}
@@ -130,8 +157,8 @@ const styles = StyleSheet.create({
     borderColor: colors.GRAY_3,
     borderRadius: 12,
     paddingHorizontal: 20,
-    paddingVertical: 32,
-    gap: 20,
+    paddingVertical: 20,
+    gap: 10,
   },
   title: {
     color: colors.BLACK,
@@ -142,5 +169,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    paddingTop: 10,
   },
 })

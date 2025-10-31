@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, Text, Alert, StyleSheet, BackHandler, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
-import { getAllOrders } from '@services/ordersService'
-import { isToday } from '@utils/functions'
+import { cancelOrder, finishOrder, getAllOrders } from '@services/ordersService'
+import { isToday, sortOrdersByUpdatedAt, showToast } from '@utils/functions'
 
 import Header from '@components/Header'
+import CustomModal from '@components/CustomModal'
 import CardOrderComponent from './components/CardOrderComponent'
 import FloatingActionButton from './components/FloatingActionButton'
 
@@ -17,6 +18,11 @@ export default function HomeScreen() {
   const [isLoading, setLoading] = useState(true)
   const [pickedOrder, setPickedOrder] = useState<any>({})
   const [activeTab, setActiveTab] = useState<'today' | 'others'>('today')
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [showFinishModal, setShowFinishModal] = useState(false)
+  const [loadingCancel, setLoadingCancel] = useState(false)
+  const [loadingFinish, setLoadingFinish] = useState(false)
+  const [pendingToast, setPendingToast] = useState<any>(null)
 
   const navigation = useNavigation()
 
@@ -29,18 +35,18 @@ export default function HomeScreen() {
     fetchOrders()
   }, [])
 
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', () => true)
-    return () => subscription.remove()
-  }, [])
-
   const fetchOrders = async () => {
     try {
       setLoading(true)
       const response = await getAllOrders()
-      setOrders(response)
+      const sortedOrders = sortOrdersByUpdatedAt(response)
+      setOrders(sortedOrders)
     } catch (error) {
-      Alert.alert('Erro', 'Falha ao carregar pedidos')
+      showToast({
+        type: 'error',
+        title: 'Erro',
+        message: error.message,
+      })
     } finally {
       setLoading(false)
     }
@@ -52,33 +58,117 @@ export default function HomeScreen() {
     fetchOrders()
   }
 
-  const handleAddOrder = () => {
+  const onPressAddOrder = () => {
     //@ts-ignore
     navigation.navigate('NewOrder')
   }
 
-  const handleEditOrder = () => {
-    if(pickedOrder.ped_id) {
-        //@ts-ignore
-        navigation.navigate('EditOrder')
-      } else {
-        Alert.alert('Nenhum pedido selecionado', 'Selecione um pedido para editar!')
-      }
+  const onPressUpdateOrder = () => {
+    if (!pickedOrder.ped_id) {
+      showToast({
+        type: 'info',
+        title: 'Nenhum pedido selecionado',
+        message: 'Selecione um pedido para editar!',
+      })
+      return
+    }
+
+    //@ts-ignore
+    navigation.navigate('UpdateOrder', { order: pickedOrder })
   }
 
-  const handleCancelOrder = () => {
-    if(pickedOrder.ped_id) {
+  const onPressCancelOrder = () => {
+    if (!pickedOrder.ped_id) {
+      showToast({
+        type: 'info',
+        title: 'Nenhum pedido selecionado',
+        message: 'Selecione um pedido para cancelar!',
+      })
+      return
+    }
 
-    } else {
-      Alert.alert('Nenhum pedido selecionado', 'Selecione um pedido para cancelar!')
+    setShowCancelModal(true)
+  }
+
+  const onPressFinishOrder = () => {
+    if (!pickedOrder.ped_id) {
+      showToast({
+        type: 'info',
+        title: 'Nenhum pedido selecionado',
+        message: 'Selecione um pedido para finalizar!',
+      })
+      return
+    }
+
+    if (pickedOrder.ped_status_pag !== 'Pago' && pickedOrder.ped_status_preparo !== 'Finalizado') {
+      showToast({
+        type: 'info',
+        title: 'Aviso',
+        message: `Pedido #${pickedOrder.ped_id} deve estar com status de Pago e de Finalizado`,
+      })
+      return
+    }
+    setShowFinishModal(true)
+  }
+
+  const handleCancelOrder = async () => {
+    try {
+      setLoadingCancel(true)
+      await cancelOrder(pickedOrder.ped_id)
+
+      const updatedOrders = orders.filter(order => order.ped_id !== pickedOrder.ped_id)
+      setOrders(updatedOrders)
+
+      setPendingToast({
+        type: 'success',
+        title: 'Sucesso!',
+        message: `Pedido #${pickedOrder.ped_id} cancelado com sucesso!`,
+      })
+      setShowCancelModal(false)
+      setPickedOrder({})
+    } catch (error) {
+      showToast({
+        type: 'error',
+        title: 'Erro',
+        message: error.message,
+        topOffset: 0,
+      })
+    } finally {
+      setLoadingCancel(false)
     }
   }
 
-  const handleFinishOrder = () => {
-    if(pickedOrder.ped_id) {
+  const handleFinishOrder = async () => {
+    try {
+      setLoadingFinish(true)
+      await finishOrder(pickedOrder.ped_id)
 
-    } else {
-      Alert.alert('Nenhum pedido selecionado', 'Selecione um pedido para finalizar!')
+      const updatedOrders = orders.filter(order => order.ped_id !== pickedOrder.ped_id)
+      setOrders(updatedOrders)
+
+      setPendingToast({
+        type: 'success',
+        title: 'Sucesso!',
+        message: `Pedido #${pickedOrder.ped_id} finalizado com sucesso!`,
+      })
+      setShowFinishModal(false)
+      setPickedOrder({})
+    } catch (error) {
+      showToast({
+        type: 'error',
+        title: 'Erro',
+        message: error.message,
+        topOffset: 0,
+      })
+    } finally {
+      setLoadingFinish(false)
+    }
+  }
+
+  const handleModalHide = () => {
+    if (pendingToast) {
+      showToast(pendingToast)
+      setPendingToast(null)
     }
   }
 
@@ -91,9 +181,7 @@ export default function HomeScreen() {
           style={[styles.tabButton, activeTab === 'today' && styles.activeTab]}
           onPress={() => setActiveTab('today')}
         >
-          <Text style={[styles.tabText, activeTab === 'today' && styles.activeTabText]}>
-            Hoje
-          </Text>
+          <Text style={[styles.tabText, activeTab === 'today' && styles.activeTabText]}>Hoje</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -107,41 +195,60 @@ export default function HomeScreen() {
       </View>
 
       {!isLoading ? (
-        <FlatList 
+        <FlatList
           data={displayedOrders}
           renderItem={({ item, index }) => (
-              <CardOrderComponent 
-                order={item}
-                index={index}
-                pickedOrder={pickedOrder}
-                setPickedOrder={setPickedOrder}
-              />
+            <CardOrderComponent
+              order={item}
+              index={index}
+              pickedOrder={pickedOrder}
+              setPickedOrder={setPickedOrder}
+            />
           )}
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={styles.withoutOrdersContainer}> 
-              <Text style={{ color: colors.GRAY_5}}>
-                  Nenhum pedido listado!
-              </Text>
+            <View style={styles.withoutOrdersContainer}>
+              <Text style={{ color: colors.GRAY_5 }}>Nenhum pedido listado!</Text>
             </View>
           }
           refreshing={isLoading}
           onRefresh={onRefresh}
         />
-      ) :(
+      ) : (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator
-              size='large'
-              color={colors.BLACK}
-          />
+          <ActivityIndicator size="large" color={colors.BLACK} />
         </View>
       )}
-      <FloatingActionButton 
-        onAdd={handleAddOrder}
-        onEdit={handleEditOrder}
-        onCancel={handleCancelOrder}
-        onFinish={handleFinishOrder}
+      <FloatingActionButton
+        onAdd={onPressAddOrder}
+        onUpdate={onPressUpdateOrder}
+        onCancel={onPressCancelOrder}
+        onFinish={onPressFinishOrder}
+      />
+
+      <CustomModal
+        isVisible={showCancelModal}
+        setVisible={() => setShowCancelModal(false)}
+        title={`Pedido #${pickedOrder.ped_id}`}
+        descriptionText="Deseja mesmo cancelar esse pedido?"
+        confirmButtonText="Cancelar"
+        confirmButtonColor={colors.RED_1}
+        onPressConfirmButton={handleCancelOrder}
+        loading={loadingCancel}
+        onModalHide={handleModalHide}
+      />
+
+      <CustomModal
+        isVisible={showFinishModal}
+        setVisible={() => setShowFinishModal(false)}
+        title={`Pedido #${pickedOrder.ped_id}`}
+        descriptionText="Deseja mesmo finalizar esse pedido?"
+        confirmButtonText="Finalizar"
+        confirmButtonColor={colors.PURPLE_1}
+        onPressConfirmButton={handleFinishOrder}
+        loading={loadingFinish}
+        onModalHide={handleModalHide}
       />
     </SafeAreaView>
   )
