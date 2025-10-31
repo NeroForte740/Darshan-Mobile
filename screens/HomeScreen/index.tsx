@@ -100,7 +100,7 @@ export default function HomeScreen() {
       return
     }
 
-    if (pickedOrder.ped_status_pag !== 'Pago' && pickedOrder.ped_status_preparo !== 'Finalizado') {
+    if (pickedOrder.ped_status_pag !== 'Pago' || pickedOrder.ped_status_preparo !== 'Finalizado') {
       showToast({
         type: 'info',
         title: 'Aviso',
