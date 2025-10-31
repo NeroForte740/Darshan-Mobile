@@ -1,9 +1,18 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, ScrollView } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  TextInput,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import { loginUser } from '@services/authService'
+import { showToast } from '@utils/functions'
 
 import CustomButton from '@components/CustomButton'
 import CustomInput from '@components/CustomInput'
@@ -17,6 +26,8 @@ export default function LoginScreen() {
   const [isLoading, setLoading] = useState(false)
 
   const navigation = useNavigation()
+  const emailInputRef = useRef<TextInput>(null)
+  const passwordInputRef = useRef<TextInput>(null)
 
   const handleLogin = async () => {
     setErrors({})
@@ -42,7 +53,11 @@ export default function LoginScreen() {
       //@ts-ignore
       navigation.navigate('Home')
     } catch (error) {
-      setErrors({ backend: error.message })
+      showToast({
+        type: 'error',
+        title: 'Erro de autenticação',
+        message: error.message,
+      })
     } finally {
       setLoading(false)
     }
@@ -50,56 +65,55 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <KeyboardAvoidingView 
-        style={styles.keyboardAvoidingView}
-        behavior='padding' 
-      >
+      <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding">
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.container}>
             <View style={styles.logoContainer}>
-              <Image 
-                  style={styles.logoImage} 
-                  source={require('@assets/logo.png')} 
-                  resizeMode='contain'
+              <Image
+                style={styles.logoImage}
+                source={require('@assets/logo.png')}
+                resizeMode="contain"
               />
-              <Text style={styles.title}>
-                  Darshan
-              </Text>
+              <Text style={styles.title}>Darshan</Text>
             </View>
 
             <View style={styles.formContainer}>
-              <CustomInput 
-                label='E-mail'
-                labelSize={18}
-                placeholder='Insira seu e-mail'
+              <CustomInput
+                label="E-mail"
+                fontSize={16}
+                maxWidth={300}
+                placeholder="Insira seu e-mail"
                 value={email}
-                onChangeText={(e) => setEmail(e)}
+                onChangeText={e => setEmail(e)}
                 errorMessage={errors.email || ''}
                 keyboardType={'email-address'}
+                ref={emailInputRef}
+                returnKeyType="next"
+                onSubmitEditing={() => passwordInputRef.current?.focus()}
               />
-              <CustomInput 
-                label='Senha'
-                labelSize={18}
-                placeholder='Insira sua senha'
+              <CustomInput
+                label="Senha"
+                fontSize={16}
+                maxWidth={300}
+                placeholder="Insira sua senha"
                 value={password}
-                onChangeText={(e) => setPassword(e)}
+                onChangeText={e => setPassword(e)}
                 errorMessage={errors.password || ''}
                 secureTextEntry
+                ref={passwordInputRef}
+                returnKeyType="send"
+                onSubmitEditing={handleLogin}
               />
-              {errors.backend && (
-                <Text style={styles.errorText}>{errors.backend}</Text>
-                )
-              }
+
               <View style={styles.buttonContainer}>
-                <CustomButton 
+                <CustomButton
                   onPress={() => handleLogin()}
-                  text='Entrar'
+                  text="Entrar"
                   backgroundColor={colors.PURPLE_1}
                   paddingVertical={8}
-                  paddingHorizontal={60}
                   borderRadius={24}
+                  maxWidth={180}
                   loading={isLoading}
-                  marginTop={10}
                 />
               </View>
             </View>
@@ -132,8 +146,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoImage: {
-    maxWidth: 100,
-    maxHeight: 100,
+    maxWidth: 120,
+    maxHeight: 120,
     marginBottom: 8,
   },
   title: {
@@ -144,15 +158,13 @@ const styles = StyleSheet.create({
   formContainer: {
     maxWidth: '75%',
     width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 10,
-  },
-  errorText: {
-    fontSize: 14,
-    color: colors.RED_1,
-    marginTop: 8,
-    textAlign: 'center',
   },
   buttonContainer: {
     alignItems: 'center',
+    width: '100%',
+    marginTop: 10,
   },
 })
