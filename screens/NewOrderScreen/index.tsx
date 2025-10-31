@@ -90,7 +90,7 @@ export default function NewOrderScreen() {
               <View style={styles.buttonContainer}>
                 <CustomButton
                   onPress={() => handleCreateOrder()}
-                  text="Concluir Pedido"
+                  text="Adicionar Pedido"
                   backgroundColor={colors.BLUE_1}
                   paddingVertical={8}
                   borderRadius={24}
