@@ -17,6 +17,7 @@ interface CustomButtonProps {
   textColor?: string
   fontSize?: number
   maxWidth?: number
+  testID?: string
 }
 
 const CustomButton = (props: CustomButtonProps) => {
@@ -33,6 +34,7 @@ const CustomButton = (props: CustomButtonProps) => {
     textColor = colors.WHITE,
     fontSize = 16,
     maxWidth,
+    testID,
   } = props
 
   const styles = getCustomButtonStyles(
@@ -47,9 +49,9 @@ const CustomButton = (props: CustomButtonProps) => {
   )
 
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} disabled={loading}>
+    <TouchableOpacity style={styles.button} onPress={onPress} disabled={loading} testID={testID}>
       {loading ? (
-        <ActivityIndicator color={loadingColor} />
+        <ActivityIndicator color={loadingColor} testID="loading-indicator" />
       ) : (
         <Text style={styles.buttonText}>{text}</Text>
       )}

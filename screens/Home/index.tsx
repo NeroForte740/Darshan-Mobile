@@ -13,7 +13,7 @@ import FloatingActionButton from './components/FloatingActionButton'
 
 import colors from '@styles/colors'
 
-export default function HomeScreen() {
+export default function Home() {
   const [orders, setOrders] = useState([])
   const [isLoading, setLoading] = useState(true)
   const [pickedOrder, setPickedOrder] = useState<any>({})
@@ -180,6 +180,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'today' && styles.activeTab]}
           onPress={() => setActiveTab('today')}
+          testID="today-tab"
         >
           <Text style={[styles.tabText, activeTab === 'today' && styles.activeTabText]}>Hoje</Text>
         </TouchableOpacity>
@@ -187,6 +188,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'others' && styles.activeTab]}
           onPress={() => setActiveTab('others')}
+          testID="others-tab"
         >
           <Text style={[styles.tabText, activeTab === 'others' && styles.activeTabText]}>
             Outros
@@ -208,15 +210,16 @@ export default function HomeScreen() {
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={styles.withoutOrdersContainer}>
+            <View style={styles.withoutOrdersContainer} testID="empty-orders-message">
               <Text style={{ color: colors.GRAY_5 }}>Nenhum pedido listado!</Text>
             </View>
           }
           refreshing={isLoading}
           onRefresh={onRefresh}
+          testID="orders-list"
         />
       ) : (
-        <View style={styles.loadingContainer}>
+        <View style={styles.loadingContainer} testID="loading-indicator">
           <ActivityIndicator size="large" color={colors.BLACK} />
         </View>
       )}
