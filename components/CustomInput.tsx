@@ -18,6 +18,7 @@ interface CustomInputProps {
   returnKeyType?: ReturnKeyTypeOptions
   onSubmitEditing?: () => void
   maxWidth?: number
+  testID?: string
 }
 
 const CustomInput = (props: CustomInputProps) => {
@@ -36,6 +37,7 @@ const CustomInput = (props: CustomInputProps) => {
     returnKeyType,
     onSubmitEditing,
     maxWidth,
+    testID,
   } = props
 
   const styles = getCustomInputStyles(fontSize, multiline, maxWidth)
@@ -55,6 +57,7 @@ const CustomInput = (props: CustomInputProps) => {
         ref={ref}
         returnKeyType={returnKeyType}
         onSubmitEditing={onSubmitEditing}
+        testID={testID}
       />
       {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>

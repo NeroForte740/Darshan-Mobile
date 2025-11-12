@@ -19,7 +19,7 @@ import CustomInput from '@components/CustomInput'
 
 import colors from '@styles/colors'
 
-export default function LoginScreen() {
+export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<any>({})
@@ -90,6 +90,7 @@ export default function LoginScreen() {
                 ref={emailInputRef}
                 returnKeyType="next"
                 onSubmitEditing={() => passwordInputRef.current?.focus()}
+                testID="email-input"
               />
               <CustomInput
                 label="Senha"
@@ -103,6 +104,7 @@ export default function LoginScreen() {
                 ref={passwordInputRef}
                 returnKeyType="send"
                 onSubmitEditing={handleLogin}
+                testID="password-input"
               />
 
               <View style={styles.buttonContainer}>
@@ -114,6 +116,7 @@ export default function LoginScreen() {
                   borderRadius={24}
                   maxWidth={180}
                   loading={isLoading}
+                  testID="login-button"
                 />
               </View>
             </View>

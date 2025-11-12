@@ -35,24 +35,41 @@ const CardOrderComponent = props => {
   }
 
   return (
-    <TouchableOpacity onPress={() => setPickedOrder(order)} style={styles.container}>
+    <TouchableOpacity
+      onPress={() => setPickedOrder(order)}
+      style={styles.container}
+      testID={`order-card-${order.ped_id}`}
+    >
       <View key={index} tabIndex={index} style={[styles.card, orderPicked]}>
         <View style={styles.cardHeader}>
           <View style={{ alignItems: 'flex-start' }}>
-            <Text style={styles.orderIdText}>{`Pedido #${order.ped_id}`}</Text>
-            <Text style={styles.customerNameText}>{truncateText(order.ped_client, 15)}</Text>
+            <Text
+              style={styles.orderIdText}
+              testID={`order-id-${order.ped_id}`}
+            >{`Pedido #${order.ped_id}`}</Text>
+            <Text style={styles.customerNameText} testID={`customer-name-${order.ped_id}`}>
+              {truncateText(order.ped_client, 15)}
+            </Text>
           </View>
           <View style={{ alignItems: 'flex-end', gap: 4 }}>
-            <Text style={[styles.statusText, getStatusColor(order.ped_status_pag)]}>
+            <Text
+              style={[styles.statusText, getStatusColor(order.ped_status_pag)]}
+              testID={`payment-status-${order.ped_id}`}
+            >
               {order.ped_status_pag}
             </Text>
-            <Text style={[styles.statusText, getStatusColor(order.ped_status_preparo)]}>
+            <Text
+              style={[styles.statusText, getStatusColor(order.ped_status_preparo)]}
+              testID={`order-status-${order.ped_id}`}
+            >
               {order.ped_status_preparo}
             </Text>
           </View>
         </View>
         <View style={styles.cardContent}>
-          <Text style={styles.orderDescriptionText}>{truncateText(order.ped_description, 25)}</Text>
+          <Text style={styles.orderDescriptionText} testID={`order-description-${order.ped_id}`}>
+            {truncateText(order.ped_description, 25)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
