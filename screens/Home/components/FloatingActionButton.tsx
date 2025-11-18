@@ -38,7 +38,7 @@ const FloatingActionButton = props => {
       )}
 
       <TouchableOpacity style={styles.fab} onPress={() => setShowMenu(!showMenu)}>
-        <Feather name={showMenu ? 'x' : 'plus'} size={22} color={colors.WHITE} />
+        <Feather name={showMenu ? 'x' : 'plus'} size={30} color={colors.WHITE} />
       </TouchableOpacity>
     </View>
   )

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Header from '@components/Header'
@@ -76,63 +76,63 @@ export default function UpdateOrder({ route }) {
     <SafeAreaView style={styles.safeAreaView}>
       <Header />
       <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding">
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.container}>
-            <View style={styles.card}>
-              <Text style={styles.title}>{`Pedido #${order.ped_id}`}</Text>
-              <CustomPicker
-                label="Status de Pagamento"
-                fontSize={16}
-                maxWidth={300}
-                selectedValue={paymentStatus}
-                onValueChange={e => setPaymentStatus(e)}
-                options={paymentStatusOptions}
-                testID="payment-status-picker"
+        <View style={styles.container}>
+          <View style={styles.card}>
+            <Text style={styles.title}>{`Pedido #${order.ped_id}`}</Text>
+            <CustomPicker
+              label="Status de Pagamento"
+              fontSize={16}
+              maxWidth={300}
+              selectedValue={paymentStatus}
+              onValueChange={e => setPaymentStatus(e)}
+              options={paymentStatusOptions}
+              testID="payment-status-picker"
+              zIndex={2000}
+            />
+            <CustomPicker
+              label="Status do Pedido"
+              fontSize={16}
+              maxWidth={300}
+              selectedValue={orderStatus}
+              onValueChange={e => setOrderStatus(e)}
+              options={orderStatusOptions}
+              testID="order-status-picker"
+              zIndex={1000}
+            />
+            <CustomInput
+              label="Cliente"
+              fontSize={16}
+              maxWidth={300}
+              placeholder="Insira o nome do cliente"
+              value={orderClient}
+              onChangeText={e => setOrderClient(e)}
+              testID="client-input"
+            />
+            <CustomInput
+              label="Descrição do Pedido"
+              fontSize={16}
+              maxWidth={300}
+              placeholder="Ex: 2 - Água, 1 - Coca cola..."
+              value={orderDescription}
+              onChangeText={e => setOrderDescription(e)}
+              multiline={true}
+              lines={2}
+              testID="description-input"
+            />
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                onPress={() => handleUpdateOrder()}
+                text="Editar Pedido"
+                backgroundColor={colors.GREEN_1}
+                paddingVertical={8}
+                borderRadius={24}
+                maxWidth={250}
+                loading={isLoading}
+                testID="update-order-button"
               />
-              <CustomPicker
-                label="Status do Pedido"
-                fontSize={16}
-                maxWidth={300}
-                selectedValue={orderStatus}
-                onValueChange={e => setOrderStatus(e)}
-                options={orderStatusOptions}
-                testID="order-status-picker"
-              />
-              <CustomInput
-                label="Cliente"
-                fontSize={16}
-                maxWidth={300}
-                placeholder="Insira o nome do cliente"
-                value={orderClient}
-                onChangeText={e => setOrderClient(e)}
-                testID="client-input"
-              />
-              <CustomInput
-                label="Descrição do Pedido"
-                fontSize={16}
-                maxWidth={300}
-                placeholder="Ex: 2 - Água, 1 - Coca cola..."
-                value={orderDescription}
-                onChangeText={e => setOrderDescription(e)}
-                multiline={true}
-                lines={2}
-                testID="description-input"
-              />
-              <View style={styles.buttonContainer}>
-                <CustomButton
-                  onPress={() => handleUpdateOrder()}
-                  text="Editar Pedido"
-                  backgroundColor={colors.GREEN_1}
-                  paddingVertical={8}
-                  borderRadius={24}
-                  maxWidth={250}
-                  loading={isLoading}
-                  testID="update-order-button"
-                />
-              </View>
             </View>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
@@ -145,9 +145,6 @@ const styles = StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     width: '100%',
@@ -156,6 +153,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '80%',
+    maxWidth: 400,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,

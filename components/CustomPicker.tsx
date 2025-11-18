@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
+import DropDownPicker from 'react-native-dropdown-picker'
 
 import { getCustomPickerStyles } from '@styles/index'
+import colors from '@styles/colors'
 
 interface CustomPickerProps {
   label: string
@@ -12,27 +13,46 @@ interface CustomPickerProps {
   options: Array<any>
   maxWidth?: number
   testID?: string
+  zIndex?: number
 }
 
 const CustomPicker = (props: CustomPickerProps) => {
-  const { label, fontSize, selectedValue, onValueChange, options, maxWidth, testID } = props
+  const {
+    label,
+    fontSize,
+    selectedValue,
+    onValueChange,
+    options,
+    maxWidth,
+    testID,
+    zIndex = 1000,
+  } = props
+  const [open, setOpen] = useState(false)
 
   const styles = getCustomPickerStyles(fontSize, maxWidth)
+
+  const items = options.map((option, index) => ({
+    label: option.label,
+    value: option.value,
+    key: index.toString(),
+  }))
 
   return (
     <View style={styles.container} testID={testID}>
       <Text style={styles.label}>{label}</Text>
-      <View style={styles.picker}>
-        <Picker
-          selectedValue={selectedValue}
-          onValueChange={itemValue => onValueChange(itemValue)}
-          testID={testID ? `${testID}-picker` : undefined}
-        >
-          {options.map((option, index) => (
-            <Picker.Item key={index} label={option.label} value={option.value} />
-          ))}
-        </Picker>
-      </View>
+      <DropDownPicker
+        open={open}
+        value={selectedValue}
+        items={items}
+        setOpen={setOpen}
+        setValue={onValueChange}
+        style={styles.picker}
+        textStyle={{ fontSize: fontSize }}
+        containerStyle={{ zIndex: zIndex }}
+        dropDownContainerStyle={{ zIndex: zIndex, borderColor: colors.GRAY_3 }}
+        listMode="SCROLLVIEW"
+        testID={testID ? `${testID}-picker` : undefined}
+      />
     </View>
   )
 }

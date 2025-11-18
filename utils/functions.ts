@@ -1,4 +1,5 @@
 import { CommonActions } from '@react-navigation/native'
+import { Platform } from 'react-native'
 import Toast from 'react-native-toast-message'
 
 export const resetStack = (navigation, initialRoute, params = {}) => {
@@ -25,7 +26,7 @@ export const showToast = ({
   message = '',
   type,
   autoHide = true,
-  topOffset = 40,
+  topOffset = Platform.OS === 'ios' ? 60 : 40,
   visibilityTime = 3000,
   options = {},
 }) => {
