@@ -56,5 +56,56 @@ jest.mock('@expo/vector-icons', () => {
   }
 })
 
+// Mock react-native-dropdown-picker
+jest.mock('react-native-dropdown-picker', () => ({
+  __esModule: true,
+  default: jest.fn(
+    ({
+      open,
+      value,
+      items = [],
+      setOpen,
+      setValue,
+      placeholder,
+      style,
+      containerStyle,
+      dropDownContainerStyle,
+      zIndex = 1000,
+      testID,
+    }) => {
+      const React = require('react')
+      const { View, Text, TouchableOpacity } = require('react-native')
+
+      const selectedLabel = items.find(item => item.value === value)?.label || placeholder
+
+      return React.createElement(View, { style: [{ zIndex }, containerStyle], testID }, [
+        React.createElement(
+          TouchableOpacity,
+          { key: 'btn', onPress: () => setOpen?.(!open), style },
+          React.createElement(Text, {}, selectedLabel),
+        ),
+        open &&
+          React.createElement(
+            View,
+            { key: 'list', style: dropDownContainerStyle },
+            items.map(item =>
+              React.createElement(
+                TouchableOpacity,
+                {
+                  key: item.value,
+                  onPress: () => {
+                    setValue?.(item.value)
+                    setOpen?.(false)
+                  },
+                },
+                React.createElement(Text, {}, item.label),
+              ),
+            ),
+          ),
+      ])
+    },
+  ),
+}))
+
 // Timers
 jest.useFakeTimers()

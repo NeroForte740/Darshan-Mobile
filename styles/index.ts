@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { Platform, StyleSheet } from 'react-native'
 
 import colors from '@styles/colors'
 
@@ -47,7 +47,8 @@ export const getCustomInputStyles = (fontSize, multiline, maxWidth) =>
     },
     input: {
       width: '100%',
-      padding: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 12,
       borderWidth: 1,
       borderColor: colors.GRAY_3,
       borderRadius: 6,
@@ -55,6 +56,13 @@ export const getCustomInputStyles = (fontSize, multiline, maxWidth) =>
       minHeight: multiline && 60,
       maxHeight: multiline && 60,
       textAlignVertical: 'top',
+      backgroundColor: colors.WHITE,
+    },
+    toggleButton: {
+      position: 'absolute',
+      right: 2,
+      paddingHorizontal: 8,
+      paddingVertical: Platform.OS === 'ios' ? 10 : 12,
     },
     errorText: {
       fontSize: 12,
@@ -74,25 +82,25 @@ export const getHeaderStyles = () =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 16,
+      paddingHorizontal: 20,
     },
     logoContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     },
     logo: {
-      width: 24,
-      height: 24,
+      width: 30,
+      height: 30,
       marginRight: 6,
     },
     logoText: {
-      fontSize: 16,
+      fontSize: 18,
       color: colors.BLACK,
       fontWeight: 500,
     },
     logout: {
-      width: 24,
-      height: 24,
+      width: 30,
+      height: 30,
     },
   })
 
@@ -151,8 +159,8 @@ export const getFloatingActionButtonStyles = () =>
       right: 15,
     },
     fab: {
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       borderRadius: 30,
       backgroundColor: colors.PURPLE_1,
       justifyContent: 'center',
@@ -161,20 +169,21 @@ export const getFloatingActionButtonStyles = () =>
     },
     menu: {
       position: 'absolute',
-      bottom: 50,
+      bottom: 60,
       right: 0,
     },
     menuItem: {
       width: 100,
-      paddingVertical: 8,
+      paddingVertical: 12,
       backgroundColor: colors.WHITE,
       borderRadius: 25,
       alignItems: 'center',
-      marginBottom: 5,
+      marginBottom: 10,
     },
     menuText: {
       color: colors.WHITE,
       fontWeight: 500,
+      fontSize: 16,
     },
   })
 
@@ -195,6 +204,7 @@ export const getCustomPickerStyles = (fontSize, maxWidth) =>
       width: '100%',
       borderWidth: 1,
       borderColor: colors.GRAY_3,
+      backgroundColor: colors.WHITE,
       borderRadius: 6,
     },
   })

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Header from '@components/Header'
@@ -61,49 +61,47 @@ export default function NewOrder() {
     <SafeAreaView style={styles.safeAreaView}>
       <Header />
       <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding">
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.container}>
-            <View style={styles.card}>
-              <Text style={styles.title}>Novo Pedido</Text>
-              <CustomInput
-                label="Cliente"
-                fontSize={16}
-                maxWidth={300}
-                placeholder="Insira o nome do cliente"
-                value={orderClient}
-                onChangeText={e => setOrderClient(e)}
-                ref={orderClientInputRef}
-                returnKeyType="next"
-                onSubmitEditing={() => orderDescriptionInputRef.current?.focus()}
-                testID="client-input"
+        <View style={styles.container}>
+          <View style={styles.card}>
+            <Text style={styles.title}>Novo Pedido</Text>
+            <CustomInput
+              label="Cliente"
+              fontSize={16}
+              maxWidth={300}
+              placeholder="Insira o nome do cliente"
+              value={orderClient}
+              onChangeText={e => setOrderClient(e)}
+              ref={orderClientInputRef}
+              returnKeyType="next"
+              onSubmitEditing={() => orderDescriptionInputRef.current?.focus()}
+              testID="client-input"
+            />
+            <CustomInput
+              label="Descrição do Pedido"
+              fontSize={16}
+              maxWidth={300}
+              placeholder="Ex: 2 - Água, 1 - Coca cola..."
+              value={orderDescription}
+              onChangeText={e => setOrderDescription(e)}
+              ref={orderDescriptionInputRef}
+              multiline={true}
+              lines={2}
+              testID="description-input"
+            />
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                onPress={() => handleCreateOrder()}
+                text="Adicionar Pedido"
+                backgroundColor={colors.BLUE_1}
+                paddingVertical={8}
+                borderRadius={24}
+                maxWidth={250}
+                loading={isLoading}
+                testID="create-order-button"
               />
-              <CustomInput
-                label="Descrição do Pedido"
-                fontSize={16}
-                maxWidth={300}
-                placeholder="Ex: 2 - Água, 1 - Coca cola..."
-                value={orderDescription}
-                onChangeText={e => setOrderDescription(e)}
-                ref={orderDescriptionInputRef}
-                multiline={true}
-                lines={2}
-                testID="description-input"
-              />
-              <View style={styles.buttonContainer}>
-                <CustomButton
-                  onPress={() => handleCreateOrder()}
-                  text="Adicionar Pedido"
-                  backgroundColor={colors.BLUE_1}
-                  paddingVertical={8}
-                  borderRadius={24}
-                  maxWidth={250}
-                  loading={isLoading}
-                  testID="create-order-button"
-                />
-              </View>
             </View>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
@@ -116,9 +114,6 @@ const styles = StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     width: '100%',
@@ -127,6 +122,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '80%',
+    maxWidth: 400,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
